@@ -1,93 +1,29 @@
-import React, { FormEvent, useEffect, useReducer, useState } from "react";
+import React, { FormEvent, useReducer } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
-
-enum Validation {
-  PENDING = "PENDING",
-  INVALID = "INVALID",
-  VALID = "VALID",
-}
-
-enum ActionType {
-  USER_INPUT = "USER_INPUT",
-  INPUT_BLUR = "INPUT_BLUR",
-}
-
-interface Action {
-  type: ActionType;
-  value?: string | undefined;
-  validator: (value: string | undefined) => Validation;
-}
-
-interface FormInput {
-  value: string;
-  isValid: Validation;
-}
-
-const emailValidator = (value: string | undefined): Validation => {
-  if (value) {
-    return value.includes("@") ? Validation.VALID : Validation.INVALID;
-  }
-  return Validation.INVALID;
-};
-
-const passwordValidator = (value: string | undefined): Validation => {
-  if (value) {
-    return value.trim().length > 6 ? Validation.VALID : Validation.INVALID;
-  }
-  return Validation.INVALID;
-};
-
-const inputReducer = (state: FormInput, action: Action): FormInput => {
-  switch (action.type) {
-    case ActionType.USER_INPUT:
-      return {
-        value: action.value ? action.value : "",
-        isValid: action.validator(action.value),
-      };
-    case ActionType.INPUT_BLUR:
-      return {
-        value: state.value,
-        isValid: action.validator(state.value),
-      };
-  }
-};
+import Validation from "./interfaces/Validation";
+import ActionType from "./actions/ActionType";
+import formReducer from "./reducers/FormReducer";
+import INITIAL_FORM_DATA from "./constants/FormData";
 
 const Login = (props: {
   onLogin: (email: string, password: string) => void;
 }) => {
-  const [formIsValid, setFormIsValid] = useState(false);
+  const [formState, dispatchForm] = useReducer(formReducer, INITIAL_FORM_DATA);
 
-  const [emailState, dispatchEmail] = useReducer(inputReducer, {
-    value: "",
-    isValid: Validation.PENDING,
-  });
+  const {
+    email: { validity: emailIsValid },
+  } = formState;
 
-  const [passwordState, dispatchPassword] = useReducer(inputReducer, {
-    value: "",
-    isValid: Validation.PENDING,
-  });
-
-  const { isValid: emailIsValid } = emailState;
-  const { isValid: passwordIsValid } = passwordState;
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setFormIsValid(
-        emailIsValid === Validation.VALID &&
-          passwordIsValid === Validation.VALID
-      );
-    }, 500);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [emailIsValid, passwordIsValid]);
+  const {
+    password: { validity: passwordIsValid },
+  } = formState;
 
   const submitHandler = (event: FormEvent) => {
     event.preventDefault();
-    props.onLogin(emailState.value, passwordState.value);
+    props.onLogin(formState.email.value, formState.email.value);
   };
 
   return (
@@ -98,22 +34,20 @@ const Login = (props: {
             emailIsValid === Validation.INVALID ? classes.invalid : ""
           }`}
         >
-          <label htmlFor="email">E-Mail</label>
+          <label htmlFor="email">Email</label>
           <input
             type="email"
             id="email"
-            value={emailState.value}
+            value={formState.email.value}
             onChange={(event) =>
-              dispatchEmail({
-                type: ActionType.USER_INPUT,
+              dispatchForm({
+                type: ActionType.EMAIL_USER_INPUT,
                 value: event.target.value,
-                validator: emailValidator,
               })
             }
             onBlur={() =>
-              dispatchEmail({
-                type: ActionType.INPUT_BLUR,
-                validator: emailValidator,
+              dispatchForm({
+                type: ActionType.EMAIL_INPUT_BLUR,
               })
             }
           />
@@ -127,24 +61,26 @@ const Login = (props: {
           <input
             type="password"
             id="password"
-            value={passwordState.value}
+            value={formState.password.value}
             onChange={(event) =>
-              dispatchPassword({
-                type: ActionType.USER_INPUT,
+              dispatchForm({
+                type: ActionType.PASSWORD_USER_INPUT,
                 value: event.target.value,
-                validator: passwordValidator,
               })
             }
             onBlur={() =>
-              dispatchPassword({
-                type: ActionType.INPUT_BLUR,
-                validator: passwordValidator,
+              dispatchForm({
+                type: ActionType.PASSWORD_INPUT_BLUR,
               })
             }
           />
         </div>
         <div className={classes.actions}>
-          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+          <Button
+            type="submit"
+            className={classes.btn}
+            disabled={!formState.enableSubmit}
+          >
             Login
           </Button>
         </div>
