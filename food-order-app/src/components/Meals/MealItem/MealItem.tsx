@@ -1,4 +1,4 @@
-import { Meal } from "@/src/interfaces/Meal";
+import { Meal } from "../../../interfaces/Meal";
 import classes from "./MealItem.module.css";
 import { MealItemForm } from "./MealItemForm";
 
@@ -12,7 +12,7 @@ export const MealItem = (props: { meal: Meal }) => {
         <div className={classes.price}>{price}</div>
       </div>
       <div>
-        <MealItemForm mealId={props.meal.id} />
+        <MealItemForm meal={props.meal} />
       </div>
     </li>
   );
