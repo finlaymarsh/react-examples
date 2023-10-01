@@ -1,7 +1,7 @@
 import { Cart } from "./components/Cart/Cart";
 import { Header } from "./components/Layout/Header";
 import { Meals } from "./components/Meals/Meals";
-import { CartContextProvider } from "./context/cart-context";
+import { CartContextProvider } from "./store/cart-context";
 
 export const App = () => {
   return (

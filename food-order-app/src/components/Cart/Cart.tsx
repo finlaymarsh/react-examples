@@ -1,8 +1,9 @@
-import CartContext from "../../context/cart-context";
+import CartContext from "../../store/cart-context";
 import { CartItem } from "../../interfaces/CartItem";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Modal } from "../UI/Modal/Modal";
 import classes from "./Cart.module.css";
+import { CartItemLi } from "./CartItemLi";
 
 export const Cart = () => {
   const cartContext = useContext(CartContext);
@@ -10,11 +11,11 @@ export const Cart = () => {
   return (
     <>
       {cartContext.showCart && (
-        <Modal>
+        <Modal onClick={() => cartContext.setShowCart(false)}>
           <ul className={classes["cart-items"]}>
             {Array.from<CartItem>(cartContext.cart.items.values()).map(
               (item) => (
-                <li key={item.id}>{item.name}</li>
+                <CartItemLi key={item.id} item={item} />
               )
             )}
           </ul>
@@ -29,7 +30,9 @@ export const Cart = () => {
             >
               Close
             </button>
-            <button className={classes.button}>Order</button>
+            {cartContext.cart.items.size !== 0 && (
+              <button className={classes.button}>Order</button>
+            )}
           </div>
         </Modal>
       )}

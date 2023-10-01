@@ -1,5 +1,6 @@
+import { CartItemsMap } from "../classes/CartItemsMap";
 import { CartItem } from "./CartItem";
 
 export interface Cart {
-  items: Map<string, CartItem>;
+  items: CartItemsMap;
 }

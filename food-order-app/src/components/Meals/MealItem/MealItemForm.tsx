@@ -1,20 +1,25 @@
-import CartContext from "../../../context/cart-context";
-import { useContext, useState } from "react";
+import CartContext from "../../../store/cart-context";
+import { FormEvent, useContext, useRef } from "react";
 import { Input } from "../../UI/Input/Input";
 import classes from "./MealItemForm.module.css";
-import { CartItem, createCartItemFromMeal } from "../../../interfaces/CartItem";
+import { createCartItemFromMeal } from "../../../interfaces/CartItem";
 import { Meal } from "../../../interfaces/Meal";
 
 export const MealItemForm = (props: { meal: Meal }) => {
   const cartContext = useContext(CartContext);
-  const [amount, setAmount] = useState(
-    cartContext.cart.items.has(props.meal.id)
-      ? (cartContext.cart.items.get(props.meal.id) as CartItem).amount
-      : 0
-  );
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const submitHandler = (event: FormEvent) => {
+    event.preventDefault();
+    const amount = +(inputRef.current?.value as string);
+    cartContext.addItem(createCartItemFromMeal(props.meal, amount));
+  };
+
   return (
     <form className={classes.form}>
       <Input
+        ref={inputRef}
         label="Amount"
         input={{
           id: `amount_${props.meal}`,
@@ -22,18 +27,10 @@ export const MealItemForm = (props: { meal: Meal }) => {
           min: 0,
           max: 5,
           step: 1,
-          value: amount,
-          onChange: (event) => setAmount(+event.target.value),
+          defaultValue: 0,
         }}
       ></Input>
-      <button
-        onClick={(event) => {
-          event.preventDefault();
-          cartContext.addItem(createCartItemFromMeal(props.meal, amount));
-        }}
-      >
-        + Add
-      </button>
+      <button onClick={submitHandler}>+ Add</button>
     </form>
   );
 };

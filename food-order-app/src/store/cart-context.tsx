@@ -10,6 +10,9 @@ const CartContext = React.createContext({
   showCart: false,
   setShowCart: (value: boolean) => {},
   calculateTotalAmount: () => 0 as number,
+  numberOfItems: () => 0 as number,
+  increaseAmountByOne: (item: CartItem) => {},
+  decreaseAmountByOne: (item: CartItem) => {},
 });
 
 export const CartContextProvider = (props: HTMLAttributes<ReactNode>) => {
@@ -23,10 +26,32 @@ export const CartContextProvider = (props: HTMLAttributes<ReactNode>) => {
     });
   };
 
+  const increaseAmountByOne = (item: CartItem) => {
+    dispatchCart({
+      type: CartActionType.INCREASE_ITEM_AMOUNT_BY_1,
+      value: item,
+    });
+  };
+
+  const decreaseAmountByOne = (item: CartItem) => {
+    dispatchCart({
+      type: CartActionType.DECREASE_ITEM_AMOUNT_BY_1,
+      value: item,
+    });
+  };
+
   const calculateTotalAmount = (): number => {
     let sum = 0;
     for (const item of Array.from(cartState.items.values())) {
       sum += item.price * item.amount;
+    }
+    return sum;
+  };
+
+  const numberOfItems = (): number => {
+    let sum = 0;
+    for (const item of Array.from(cartState.items.values())) {
+      sum += item.amount;
     }
     return sum;
   };
@@ -39,6 +64,9 @@ export const CartContextProvider = (props: HTMLAttributes<ReactNode>) => {
         showCart: showCart,
         setShowCart: setShowCart,
         calculateTotalAmount: calculateTotalAmount,
+        numberOfItems: numberOfItems,
+        increaseAmountByOne: increaseAmountByOne,
+        decreaseAmountByOne: decreaseAmountByOne,
       }}
     >
       {props.children}
