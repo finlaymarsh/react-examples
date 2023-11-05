@@ -6,7 +6,7 @@ const classes =
 interface Props extends HTMLAttributes<HTMLElement> {
   label: string;
   type?: string;
-  isTextArea?: boolean;
+  istextarea?: string;
 }
 
 const Input = forwardRef((props: Props, ref: Ref<HTMLElement>) => {
@@ -15,7 +15,7 @@ const Input = forwardRef((props: Props, ref: Ref<HTMLElement>) => {
       <label className="text-sm font-bold uppercase text-stone-500">
         {props.label}
       </label>
-      {props.isTextArea ? (
+      {props.istextarea ? (
         <textarea
           ref={ref as Ref<HTMLTextAreaElement>}
           className={classes}

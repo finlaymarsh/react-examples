@@ -9,7 +9,7 @@ import { ProjectContext } from "./store/ProjectContext";
 function App() {
   const projectContext = useContext(ProjectContext);
   return (
-    <main className="h-screen my-8 flex gap-8">
+    <main className="h-screen flex gap-8">
       <ProjectSideBar />
       {projectContext.displayState === ProjectState.ADDING_PROJECT ? (
         <NewProject />

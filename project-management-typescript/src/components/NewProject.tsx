@@ -59,7 +59,7 @@ export default function NewProject() {
         </menu>
         <div>
           <Input label="Title" ref={title} />
-          <Input label="Description" ref={description} isTextArea={true} />
+          <Input label="Description" ref={description} istextarea="true" />
           <Input type="date" label="Due Date" ref={dueDate} />
         </div>
       </div>

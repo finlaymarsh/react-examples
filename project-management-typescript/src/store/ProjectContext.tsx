@@ -1,6 +1,7 @@
 import React, { HTMLAttributes, ReactNode, useState } from "react";
 import Project from "../interfaces/Project";
 import { ProjectState } from "../interfaces/ProjectState";
+import Task from "../interfaces/Task";
 
 const ProjectContext = React.createContext({
   handleStartAddingProject: () => {},
@@ -8,6 +9,8 @@ const ProjectContext = React.createContext({
   saveProject: (_: Project) => {},
   displayProject: (_: Project) => {},
   deleteProject: (_: Project) => {},
+  addTaskToSelectedProject: (_: Task) => {},
+  deleteTaskFromSelectedProject: (_: Task) => {},
   displayState: ProjectState.NO_PROJECT_SELECTED as ProjectState,
   projects: [] as Project[],
   selectedProject: {} as Project | undefined,
@@ -57,6 +60,35 @@ export default function ProjectContextProvider(
     setDisplayState(ProjectState.DISPLAY_PROJECT);
   }
 
+  function addTaskToSelectedProject(task: Task) {
+    setProjects((prev) => {
+      let projects = [...prev];
+      const selectedProjectId = projects.findIndex(
+        (project) => project.id === selectedProject?.id
+      );
+      const updatedProject = { ...projects[selectedProjectId] };
+      updatedProject.tasks.unshift(task);
+      projects[selectedProjectId] = updatedProject;
+      return projects;
+    });
+  }
+
+  function deleteTaskFromSelectedProject(task: Task) {
+    setProjects((prev) => {
+      let projects = [...prev];
+      const selectedProjectId = projects.findIndex(
+        (project) => project.id === selectedProject?.id
+      );
+      const updatedProject = { ...projects[selectedProjectId] };
+      let updatedTasks = [...updatedProject.tasks];
+      updatedTasks = updatedTasks.filter((e) => e.id !== task.id);
+      updatedProject.tasks = updatedTasks;
+      projects[selectedProjectId] = updatedProject;
+      setSelectedProject(updatedProject);
+      return projects;
+    });
+  }
+
   return (
     <ProjectContext.Provider
       value={{
@@ -65,6 +97,8 @@ export default function ProjectContextProvider(
         saveProject: saveProject,
         displayProject: displayProject,
         deleteProject: deleteProject,
+        addTaskToSelectedProject: addTaskToSelectedProject,
+        deleteTaskFromSelectedProject: deleteTaskFromSelectedProject,
         displayState,
         projects,
         selectedProject,

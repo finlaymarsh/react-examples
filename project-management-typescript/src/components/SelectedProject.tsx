@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { ProjectContext } from "../store/ProjectContext";
+import Tasks from "./Tasks";
 
 export default function SelectedProject() {
   const projectContext = useContext(ProjectContext);
@@ -33,7 +34,7 @@ export default function SelectedProject() {
           {projectContext.selectedProject?.description}
         </p>
       </header>
-      TASKS
+      <Tasks />
     </div>
   );
 }
