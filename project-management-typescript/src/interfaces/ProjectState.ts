@@ -1,0 +1,5 @@
+export enum ProjectState {
+  ADDING_PROJECT,
+  NO_PROJECT_SELECTED,
+  DISPLAY_PROJECT,
+}
